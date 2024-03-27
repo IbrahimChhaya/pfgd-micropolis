@@ -758,6 +758,17 @@ public class MainWindow extends JFrame
 			}));
 		windowsMenu.add(menuItem);
 
+		menuItem = new JMenuItem(strings.getString("menu.windows.bond"));
+		setupKeys(menuItem, "menu.windows.bond");
+		menuItem.addActionListener(wrapActionListener(
+			new ActionListener() {
+			public void actionPerformed(ActionEvent ev)
+			{
+				onViewBondClicked();
+			}
+			}));
+		windowsMenu.add(menuItem);
+
 		JMenu helpMenu = new JMenu(strings.getString("menu.help"));
 		setupKeys(helpMenu, "menu.help");
 		menuBar.add(helpMenu);
@@ -1658,6 +1669,28 @@ public class MainWindow extends JFrame
 		}
 
 		BudgetDialog dlg = new BudgetDialog(this, getEngine());
+		dlg.setModal(true);
+		dlg.setVisible(true);
+
+		if (timerEnabled) {
+			startTimer();
+		}
+	}
+
+	void onViewBondClicked()
+	{
+		//dirty1 = true;
+		showBondWindow();
+	}
+
+	private void showBondWindow()
+	{
+		boolean timerEnabled = isTimerActive();
+		if (timerEnabled) {
+			stopTimer();
+		}
+
+		BondDialog dlg = new BondDialog(this, getEngine());
 		dlg.setModal(true);
 		dlg.setVisible(true);
 
