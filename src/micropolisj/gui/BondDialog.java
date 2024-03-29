@@ -24,25 +24,11 @@ public class BondDialog extends JDialog
 
 	static ResourceBundle strings = MainWindow.strings;
 
-	private void applyChange()
-	{
+	// private void applyChange()
+	// {
 
-		loadBudgetNumbers(false);
-	}
-
-	private void loadBudgetNumbers(boolean updateEntries)
-	{
-		BudgetNumbers b = engine.generateBudget();
-		
-	}
-
-	static void adjustSliderSize(JSlider slider)
-	{
-		Dimension sz = slider.getPreferredSize();
-		slider.setPreferredSize(
-			new Dimension(80, sz.height)
-			);
-	}
+	// 	loadBudgetNumbers(false);
+	// }
 
 	public BondDialog(Window owner, Micropolis engine)
 	{
@@ -87,31 +73,6 @@ public class BondDialog extends JDialog
 		}
 	}
 
-	/*private JComponent makeBondPane() 
-	{
-		JPanel bondPane = new JPanel(new GridBagLayout());
-		bondPane.setBorder(BorderFactory.createEmptyBorder(8,0,0,0));
-
-		GridBagConstraints c0 = new GridBagConstraints();
-		GridBagConstraints c1 = new GridBagConstraints();
-
-		c0.gridx = 0;
-		c1.gridx = 1;
-		c0.anchor = c1.anchor = GridBagConstraints.WEST;
-		c0.gridy = c1.gridy = 0;
-		c0.weightx = c1.weightx = 0.5;
-				
-		bondPane.add(new JLabel(strings.getString("bonddlg.current_bond") + "$" + "0.00"), c0);		
-		JButton repayBtn = new JButton(strings.getString("bonddlg.repay_bond"));
-		repayBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ev) {
-				//repayBond();
-			}});
-		bondPane.add(repayBtn, c1);
-
-		return bondPane;
-	}*/
-
 	private JComponent makeCurrentBondPane() {
 		JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -121,56 +82,22 @@ public class BondDialog extends JDialog
 		gbc.insets = new Insets(0, 0, 0, 20);
 
         // Left column components
-        JLabel label = new JLabel("Current bond: $x.xx");
+        JLabel label = new JLabel(strings.getString("bonddlg.current_bond") + "$" + "0.00");
         mainPanel.add(label, gbc);
 
         // Right column components
-        JButton button = new JButton("Repay Bond");
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.CENTER;
-		gbc.insets = new Insets(0, 0, 0, 0);
-        mainPanel.add(button, gbc);
-
-		return mainPanel;
-	}
-
-	/* private JComponent makeNewBondPane() 
-	{
-		JPanel bondPane = new JPanel(new GridBagLayout());
-		bondPane.setBorder(BorderFactory.createEmptyBorder(8,0,0,0));
-
-		GridBagConstraints c0 = new GridBagConstraints();
-		GridBagConstraints c1 = new GridBagConstraints();
-
-		c0.gridx = 0;
-		c1.gridx = 1;
-		c0.anchor = c1.anchor = GridBagConstraints.WEST;
-		c0.gridy = c1.gridy = 0;
-		c0.weightx = c1.weightx = 0.5;
-				
-		bondPane.add(new JLabel(strings.getString("bonddlg.issue_new_bond") + "$" + "0.00"), c0);		
-		JRadioButton radioButton1 = new JRadioButton("$20,000");
-      	JRadioButton radioButton2 = new JRadioButton("$50,000");
-      	JRadioButton radioButton3 = new JRadioButton("$100,000");
-
-      	ButtonGroup group = new ButtonGroup();
-		group.add(radioButton1);
-		group.add(radioButton2);
-		group.add(radioButton3);
-
-		bondPane.add(radioButton1);
-		bondPane.add(radioButton2);
-		bondPane.add(radioButton3);
-		
-		JButton issueBtn = new JButton(strings.getString("bonddlg.issue_bond"));
-		issueBtn.addActionListener(new ActionListener() {
+		JButton repayBtn = new JButton(strings.getString("bonddlg.repay_bond"));
+		repayBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				//repayBond();
 			}});
-		bondPane.add(issueBtn, c1);
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+		gbc.insets = new Insets(0, 0, 0, 0);
+        mainPanel.add(repayBtn, gbc);
 
-		return bondPane;
-	}*/
+		return mainPanel;
+	}
 
 	private JComponent makeNewBondPane() {
 		JPanel mainPanel = new JPanel(new GridBagLayout());
@@ -180,7 +107,7 @@ public class BondDialog extends JDialog
         gbc.anchor = GridBagConstraints.WEST;
 
         // Left column components
-        JLabel label = new JLabel("Issue new bond");
+        JLabel label = new JLabel(strings.getString("bonddlg.issue_new_bond"));
         mainPanel.add(label, gbc);
 
         JRadioButton option1 = new JRadioButton("$20,000");
@@ -199,14 +126,23 @@ public class BondDialog extends JDialog
         group.add(option1);
         group.add(option2);
         group.add(option3);
-
+		
         // Right column components
-        JButton button = new JButton("Issue Bond");
-        gbc.gridx = 1;
+		JButton issueBtn = new JButton(strings.getString("bonddlg.issue_bond"));
+		issueBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				//issueBond();
+				System.out.println(option1.isSelected());
+				System.out.println(option2.isSelected());
+				System.out.println(option3.isSelected());
+
+				engine.budget.totalBond = 500;
+				engine.budget.totalFunds += 500;
+			}});        gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.gridheight = 4; // Span 4 rows
         gbc.anchor = GridBagConstraints.CENTER;
-        mainPanel.add(button, gbc);
+        mainPanel.add(issueBtn, gbc);
 
 		return mainPanel;
 	}

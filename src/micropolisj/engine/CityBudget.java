@@ -38,6 +38,11 @@ public class CityBudget
 	 */
 	int policeFundEscrow;
 
+	/**
+	 * The amount of bond.
+	 */
+	public int totalBond;
+
 	CityBudget(Micropolis city)
 	{
 		this.city = city;
