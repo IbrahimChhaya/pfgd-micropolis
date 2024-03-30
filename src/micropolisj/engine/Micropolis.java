@@ -611,6 +611,7 @@ public class Micropolis
 			if (cityTime % TAXFREQ == 0) {
 				collectTax();
 				evaluation.cityEvaluation();
+				// bondRepayment();
 			}
 			break;
 
@@ -1779,6 +1780,14 @@ public class Micropolis
 		budget.roadFundEscrow = 0;
 		budget.fireFundEscrow = 0;
 		budget.policeFundEscrow = 0;
+	}
+
+	void bondRepayment() {
+		if (budget.totalBond > 0) {
+			spend(budget.bondRepayment);
+			budget.totalBond -= budget.bondRepayment;
+		}
+	
 	}
 
 	/** Annual maintenance cost of each police station. */
