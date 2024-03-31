@@ -40,7 +40,7 @@ public class BondDialog extends JDialog
 		this.engine = engine;
 		
 		Box mainBox = new Box(BoxLayout.Y_AXIS);
-		mainBox.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
+		mainBox.setBorder(BorderFactory.createEmptyBorder(8, 18, 25, 18));
 		add(mainBox, BorderLayout.CENTER);
 
 		mainBox.add(makeCurrentBondPane());
@@ -81,7 +81,7 @@ public class BondDialog extends JDialog
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-		gbc.insets = new Insets(0, 0, 0, 20);
+		gbc.insets = new Insets(0, 50, 25, 50);
 
         // Left column components
 		DecimalFormat df = new DecimalFormat("###,###,###");
@@ -90,18 +90,16 @@ public class BondDialog extends JDialog
 
         // Right column components
 		JButton repayBtn = new JButton(strings.getString("bonddlg.repay_bond"));
-		repayBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ev) {
-				//repayBond();
-				if (engine.budget.totalBond > 0) {
-					engine.budget.totalBond = 0;
-					engine.budget.totalFunds -= engine.budget.totalBond;	
-				}
-			}});
 		if (engine.budget.totalBond == 0 || 
 			(engine.budget.totalBond > 0 && engine.budget.totalFunds >= engine.budget.totalBond)) {
 			repayBtn.setEnabled(false);
 		}
+		repayBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				engine.budget.totalBond = 0;
+				engine.budget.totalFunds -= engine.budget.totalBond;	
+			}
+		});
 
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -121,29 +119,44 @@ public class BondDialog extends JDialog
         // Left column components
 		JLabel label = new JLabel(strings.getString("bonddlg.issue_new_bond"));
 		mainPanel.add(label, gbc);
+		
+		JButton issueBtn = new JButton(strings.getString("bonddlg.issue_bond"));
+		issueBtn.setEnabled(false);
+
+		JLabel repaymentLabel = new JLabel("");
+		repaymentLabel.setVisible(false);
+		gbc.gridy++;
 
 		JRadioButton option1 = new JRadioButton("$20,000 @ 10%");
 		option1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
-				calculateBondRepayment(20000, 10, 10);
+				DecimalFormat df = new DecimalFormat("###,###,###");
+				repaymentLabel.setText("Repayment: $" + df.format(calculateBondRepayment(20000, 10, 10)) 
+										+ " per year");
+				repaymentLabel.setVisible(true);
+				issueBtn.setEnabled(true);
 			}
 		});
 		gbc.gridy++;
 		mainPanel.add(option1, gbc);
 
-		JRadioButton option2 = new JRadioButton("$50,000");
+		JRadioButton option2 = new JRadioButton("$50,000 @ 20%");
 		option2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
-				calculateBondRepayment(50000, 20, 10);
+				repaymentLabel.setText("Repayment: $" + calculateBondRepayment(50000, 20, 10) + " per year");
+				repaymentLabel.setVisible(true);
+				issueBtn.setEnabled(true);
 			}
 		});
 		gbc.gridy++;
         mainPanel.add(option2, gbc);
 
-        JRadioButton option3 = new JRadioButton("$100,000");
+        JRadioButton option3 = new JRadioButton("$100,000 @ 50%");
 		option3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
-				calculateBondRepayment(100000, 50, 10);
+				repaymentLabel.setText("Repayment: $" + calculateBondRepayment(100000, 50, 10) + " per year");
+				repaymentLabel.setVisible(true);
+				issueBtn.setEnabled(true);
 			}
 		});
         gbc.gridy++;
@@ -153,24 +166,24 @@ public class BondDialog extends JDialog
         group.add(option1);
         group.add(option2);
         group.add(option3);
+
+		gbc.gridy++;
+		mainPanel.add(repaymentLabel, gbc);
 		
         // Right column components
-		JButton issueBtn = new JButton(strings.getString("bonddlg.issue_bond"));
 		issueBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
-				
 				if(option1.isSelected()) {
 					engine.budget.totalBond += 20000;
-					engine.setFunds(engine.budget.totalFunds + 20000);
-					//engine.budget.totalFunds += 20000;
+					engine.spend(-20000);
 				} else if(option2.isSelected()) {
 					engine.budget.totalBond += 50000;
-					engine.budget.totalFunds += 50000;
+					engine.spend(-50000);
 				} else if(option3.isSelected()) {
 					engine.budget.totalBond += 100000;
-					engine.budget.totalFunds += 100000;
+					engine.spend(-100000);
 				}
-
+				dispose();
 			}
 		});
 
@@ -193,9 +206,10 @@ public class BondDialog extends JDialog
 		return mainPanel;
 	}
 
-	private void calculateBondRepayment(int bondAmount, int interestRate, int years) {
+	private int calculateBondRepayment(int bondAmount, int interestRate, int years) {
 		// Calculate bond repayment
 		int bondRepayment = (bondAmount + (bondAmount * (1 + interestRate / 100))) / years;
 		engine.budget.bondRepayment = bondRepayment;
+		return bondRepayment;
 	}
 }

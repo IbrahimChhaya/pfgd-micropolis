@@ -1385,6 +1385,13 @@ public class MainWindow extends JFrame
 			for (int i = 0; i < count; i++)
 			{
 				engine.animate();
+				
+				if (engine.isBudgetTime()) {
+					if (engine.budget.totalBond > 0) {
+						engine.spend(engine.budget.bondRepayment);
+						engine.budget.totalBond -= engine.budget.bondRepayment;
+					}
+				}
 				if (!engine.autoBudget && engine.isBudgetTime())
 				{
 					showAutoBudget();
