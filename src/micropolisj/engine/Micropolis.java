@@ -1781,13 +1781,6 @@ public class Micropolis
 		budget.policeFundEscrow = 0;
 	}
 
-	void bondRepayment() {
-		if (budget.totalBond > 0) {
-			spend(budget.bondRepayment);
-			budget.totalBond -= budget.bondRepayment;
-		}
-	}
-
 	/** Annual maintenance cost of each police station. */
 	static final int POLICE_STATION_MAINTENANCE = 100;
 

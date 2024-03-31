@@ -758,6 +758,7 @@ public class MainWindow extends JFrame
 			}));
 		windowsMenu.add(menuItem);
 
+		//add bond item to Windows menu
 		menuItem = new JMenuItem(strings.getString("menu.windows.bond"));
 		setupKeys(menuItem, "menu.windows.bond");
 		menuItem.addActionListener(wrapActionListener(
@@ -1386,6 +1387,10 @@ public class MainWindow extends JFrame
 			{
 				engine.animate();
 				
+				//is budget time checks if it's the end of the year
+				//if it is, it will check if the player has any bonds to pay off
+				//if they do, it will pay off the bond
+				//the total bond will be reduced by the bond repayment amount
 				if (engine.isBudgetTime()) {
 					if (engine.budget.totalBond > 0) {
 						engine.spend(engine.budget.bondRepayment);
@@ -1684,19 +1689,23 @@ public class MainWindow extends JFrame
 		}
 	}
 
+	//calls method to open bond window, not sure what dirty1 refers to
 	void onViewBondClicked()
 	{
 		//dirty1 = true;
 		showBondWindow();
 	}
 
+	//dispalys bond window
 	private void showBondWindow()
 	{
+		//pauses game
 		boolean timerEnabled = isTimerActive();
 		if (timerEnabled) {
 			stopTimer();
 		}
 
+		//instantiates bond dialog and sets it to visible
 		BondDialog dlg = new BondDialog(this, getEngine());
 		dlg.setModal(true);
 		dlg.setVisible(true);
